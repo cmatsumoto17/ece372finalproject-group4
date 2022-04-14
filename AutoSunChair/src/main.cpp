@@ -1,9 +1,17 @@
 #include <Arduino.h>
+#include "i2c.h"
+#include "lcd.h"
+#include "photoresistor.h"
+#include "servo.h"
+#include "switch.h"
+#include "time.h"
 
-void setup() {
-  // put your setup code here, to run once:
-}
 
-void loop() {
-  // put your main code here, to run repeatedly:
+int main(){
+
+
+
+  while(1){
+    
+  }
 }
