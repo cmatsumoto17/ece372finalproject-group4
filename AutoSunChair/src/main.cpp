@@ -8,6 +8,11 @@
 #include "switch.h"
 #include "time.h"
 #include "adc.h"
+#include "pwm.h"
+
+
+
+#include "Arduino.h"
 
 
 enum modes {automatic, manual};
@@ -19,16 +24,21 @@ int main(){
 
   initADC();
   initSwitchPK0();
-  initLCD();
-  initLCDPins();
-  initLCDProcedure();
+  //initLCD();
+  //initLCDPins();
+  //initLCDProcedure();
+  initPWM();
   
 
   unsigned int pResistorDiff; //ADC0 - ADC1
   
 
   while(1){
-    //state machine for controlling automatic or manual mode
+
+
+
+
+  //state machine for controlling automatic or manual mode
     switch(mode){
       case(automatic):
         pResistorDiff = ADCL;
