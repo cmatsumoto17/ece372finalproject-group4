@@ -19,7 +19,7 @@ typedef enum {
   MANUAL
 } state_e;
 
-state_e mode = AUTOMATIC;
+state_e mode = MANUAL;
 
 typedef enum {
   WAIT_PRESS_L,
@@ -53,6 +53,8 @@ int main(){
   //initLCDPins();
   //initLCDProcedure();
   initPWM();
+
+  Serial.begin(9600);
   
 
   unsigned int pResistorDiff; //ADC0 - ADC1
@@ -70,9 +72,17 @@ int main(){
       case(MANUAL):
         if (rotateLeft) {
           // rotate servo left
+          servoLeft();
+          delayMs(10);
+          servoOff();
+          Serial.println("LEFT");
         }
         else if (rotateRight) {
           // rotate servo right
+          servoRight();
+          delayMs(10);
+          servoOff();
+          Serial.println("RIGHT");
         }
       break;
     }
@@ -109,12 +119,8 @@ int main(){
         break;
     }
   
-
-    
+    // print temperature on LCD
   }
-
-  
-
 }
 
 ISR(PCINT0_vect) {
@@ -130,7 +136,7 @@ ISR(PCINT0_vect) {
   }
 }
 
-ISR(PCINT1_vect) {
+ISR(PCINT2_vect) {
   if (r_state == WAIT_PRESS_R) { // if interrupt triggered while waiting for press
     rotateRight = true; // start rotating
 

@@ -42,7 +42,7 @@ void initPWM(){
     TCCR3B |= (1<<CS31);       
     TCCR3B &= ~(1<<CS30);
 
-    OCR3A = 2550;
+    OCR3A = 0;
 
    
 
