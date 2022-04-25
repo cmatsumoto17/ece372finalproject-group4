@@ -64,3 +64,12 @@ void changeDutyCycle(int adcNum){   // duty cycle  = pulse/period  = OCRnX/ICRn
     OCR3A = adcNum;
 
 }
+void changeDutyCycleAuto(int adcNum) {
+    float result = (adcNum * .97847)
+    int conversion = (int) result;
+        if((-512 < adcNum) && (0 >= adcNum)){  // toward 1 ms pulse (-90) 5% duty cycle
+               OCR3A = OCR3A  + conversion;
+}
+        else if((0 < adcNum) &&  ((511 >= adcNum)){ // toward 2 ms pulse (90) 10% duty cycle
+              OCR3A = OCR3A + conversion;
+}
