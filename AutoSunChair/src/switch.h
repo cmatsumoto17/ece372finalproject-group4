@@ -3,6 +3,7 @@
 #ifndef SWITCH_H
 #define SWITCH_H
 
-void initSwitchPK0();
+void initSwitchPB0();
+void initSwitchPK7();
 
 #endif

@@ -14,16 +14,40 @@
 
 #include "Arduino.h"
 
+typedef enum {
+  AUTOMATIC,
+  MANUAL
+} state_e;
 
-enum modes {automatic, manual};
+state_e mode = AUTOMATIC;
 
-int mode = automatic;
+typedef enum {
+  WAIT_PRESS_L,
+  DB_PRESS_L,
+  WAIT_RELEASE_L,
+  DB_RELEASE_L
+} state_l;
+
+volatile state_l l_state = WAIT_PRESS_L;
+
+typedef enum {
+  WAIT_PRESS_R,
+  DB_PRESS_R,
+  WAIT_RELEASE_R,
+  DB_RELEASE_R
+} state_r;
+
+volatile state_r r_state = WAIT_PRESS_R;
+
+volatile boolean rotateLeft = false;
+volatile boolean rotateRight = false;
 
 int main(){
   sei();
 
   initADC();
-  initSwitchPK0();
+  initSwitchPB0();
+  initSwitchPK7();
   //initLCD();
   //initLCDPins();
   //initLCDProcedure();
@@ -34,22 +58,57 @@ int main(){
   
 
   while(1){
-
-
-
-
   //state machine for controlling automatic or manual mode
     switch(mode){
-      case(automatic):
+      case(AUTOMATIC):
         pResistorDiff = ADCL;
         pResistorDiff  += ((unsigned int) ADCH) << 8;
 
       break;
 
-      case(manual):
-
+      case(MANUAL):
+        if (rotateLeft) {
+          // rotate servo left
+        }
+        else if (rotateRight) {
+          // rotate servo right
+        }
       break;
     }
+
+    // state machine for left button debouncing
+    switch(l_state) {
+      case WAIT_PRESS_L:
+        break; // if waiting for press, do nothing
+      case DB_PRESS_L:
+        delayMs(1); // if debouncing, delay then wait for release
+        l_state = WAIT_RELEASE_L;
+        break;
+      case WAIT_RELEASE_L:
+        break; // if waiting for release, do nothing
+      case DB_RELEASE_L:
+        delayMs(1); // if debouncing, delay then wait for press
+        l_state = WAIT_PRESS_L;
+        break;
+    }
+
+    // state machine for right button debouncing
+    switch(r_state) {
+      case WAIT_PRESS_R:
+        break; // if waiting for press, do nothing
+      case DB_PRESS_R:
+        delayMs(1); // if debouncing, delay then wait for release
+        r_state = WAIT_RELEASE_R;
+        break;
+      case WAIT_RELEASE_R:
+        break; // if waiting for release, do nothing
+      case DB_RELEASE_R:
+        delayMs(1); // if debouncing, delay then wait for press
+        r_state = WAIT_PRESS_R;
+        break;
+    }
+  
+
     
   }
 
@@ -57,6 +116,28 @@ int main(){
 
 }
 
-ISR(PCINT16_vect){
+ISR(PCINT0_vect) {
+  if (l_state == WAIT_PRESS_L) { // if interrupt triggered while waiting for press
+    rotateLeft = true; // start rotating
+
+    l_state = DB_PRESS_L; // debounce
+  }
+  else if (l_state == WAIT_RELEASE_L) { // if interrupt triggered while waiting for release
+    rotateLeft = false; // stop rotating
     
+    l_state = DB_RELEASE_L; // debounce
+  }
+}
+
+ISR(PCINT1_vect) {
+  if (r_state == WAIT_PRESS_R) { // if interrupt triggered while waiting for press
+    rotateRight = true; // start rotating
+
+    r_state = DB_PRESS_R; // debounce
+  }
+  else if (r_state == WAIT_RELEASE_R) { // if interrupt triggered while waiting for release
+    rotateRight = false; // stop rotating
+    
+    r_state = DB_RELEASE_R; // debounce
+  }
 }
