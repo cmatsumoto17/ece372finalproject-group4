@@ -6,7 +6,7 @@
 #include "photoresistor.h"    //may not need photoresitor files
 #include "servo.h"
 #include "switch.h"
-#include "time.h"
+#include "timer.h"
 #include "adc.h"
 #include "pwm.h"
 
@@ -48,6 +48,7 @@ int main(){
   initADC();
   initSwitchPB0();
   initSwitchPK7();
+  initTimer1();
   //initLCD();
   //initLCDPins();
   //initLCDProcedure();
