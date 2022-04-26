@@ -7,4 +7,7 @@
 //uses A0 as input
 void initADC();
 
+int readPin1();
+int readPin0();
+
 #endif
