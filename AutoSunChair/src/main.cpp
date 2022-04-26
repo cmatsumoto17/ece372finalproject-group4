@@ -12,6 +12,7 @@
 
 
 
+
 #include "Arduino.h"
 
 typedef enum {
@@ -49,18 +50,32 @@ int main(){
   initSwitchPB0();
   initSwitchPK7();
   initTimer1();
+  initI2C();
   //initLCD();
   //initLCDPins();
   //initLCDProcedure();
   initPWM();
 
   Serial.begin(9600);
+
+  StartI2C_Trans(0b01001000);//call the deveice by address
+  StopI2C_Trans(); //end transmission
   
 
   unsigned int pResistorDiff; //ADC0 - ADC1
+  unsigned char temp;
+
+
   
 
   while(1){
+    Read_from(0b01001000,0b00000000);
+    temp = Read_data();
+    Serial.print(temp);
+   
+
+
+
   //state machine for controlling automatic or manual mode
     switch(mode){
       case(AUTOMATIC):
