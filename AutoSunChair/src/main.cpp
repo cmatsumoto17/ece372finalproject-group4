@@ -3,7 +3,6 @@
 
 #include "i2c.h"
 #include "lcd.h"
-#include "photoresistor.h"    //may not need photoresitor files
 #include "servo.h"
 #include "switch.h"
 #include "timer.h"
