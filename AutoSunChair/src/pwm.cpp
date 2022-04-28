@@ -65,30 +65,26 @@ void changeDutyCycle(int adcNum){   // duty cycle  = pulse/period  = OCRnX/ICRn
 
 }
 void changeDutyCycleAuto(int adcNum) {
-  //  float result = (adcNum * .97847)
-//   int conversion = (int) result;
-//      if((-512 < adcNum) && (0 >= adcNum)){  // toward 1 ms pulse (-90) 5% duty cycle
-//             OCR3A = OCR3A  + conversion;
-//}
-//     else if((0 < adcNum) &&  ((511 >= adcNum)){ // toward 2 ms pulse (90) 10% duty cycle
-//              OCR3A = OCR3A + conversion;
-// }
+    //calibration is calculated based on the stable adcDiff reading when a light is shined direclty above
+    int calibration = -50;
 
-    //when shining a light directly above, adc difference fluctuates from -140 to -120
+    //adjust adcNum to be centered around calibrated value
+    adcNum += calibration;
+
+
+    //when shining a light directly above, adc difference fluctuates from -20 to 20
     //if difference is in this range stay put
-
-    
-    if(adcNum < -150){ 
-        OCR3A -= 1;         //move left if below threshold
+    if(adcNum < -20 + calibration){ 
+        OCR3A -= 10;         //move left if below threshold
     }
-    else if(adcNum > -110){
-        OCR3A += 1;         //move right if over threshold
+    else if(adcNum > 20 + calibration){
+        OCR3A += 10;         //move right if over threshold
     }
 
     if(OCR3A > 2550){   
         OCR3A = 2550;       //cap OCR3A at 2550 since this is max duty cycle for the servo pwm
     }
-    else if (OCR3A < 1000){
-        OCR3A = 1000;       //cap lower bound of OCR3A since this in min duty cycle for servo pwm
+    else if (OCR3A < 550){
+        OCR3A = 550;       //cap lower bound of OCR3A since this in min duty cycle for servo pwm
     }
 }
