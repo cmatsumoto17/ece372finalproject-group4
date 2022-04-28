@@ -48,11 +48,12 @@ int main(){
   initADC();
   initSwitchPB0();
   initSwitchPK7();
+  initTimer0();
   initTimer1();
   initI2C();
-  //initLCD();
-  //initLCDPins();
-  //initLCDProcedure();
+  initLCD();
+ // initLCDPins();
+// initLCDProcedure();
   initPWM();
 
   Serial.begin(9600);
@@ -62,10 +63,13 @@ int main(){
   
 
   unsigned int pResistorDiff; //ADC0 - ADC1
-  unsigned char temp;
-  float realtemp=0;
+  unsigned char temp; // temperature variable
+  float realtemp=0; // temperature float variable
+  char tempval[8];
 
-
+moveCursor(0,0);
+writeString("Temperature in C");
+moveCursor(1,0);
 
   
 
@@ -73,8 +77,8 @@ int main(){
   
     Read_from(0b01001000,0b00000000);
     temp = Read_data();
-    
     Serial.print(realtemp);
+    
 
     if(temp & 0x01){
       temp = temp & 0xFE;
@@ -88,6 +92,10 @@ int main(){
       realtemp = temp*(-1);
 
     }
+    dtostrf(realtemp,6,2,tempval);
+    moveCursor(1,0);
+    writeString(tempval);
+    moveCursor(1,0);
     
     Serial.print("\n");
     delayMs(1000);

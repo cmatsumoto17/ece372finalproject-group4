@@ -14,13 +14,13 @@ void initLCDPins(){
 
     //PORTA0 - A3 used for the LCD data pins, set to output
     //PORTA0 is LSB
-    DDRA |= (1 << PA0) | (1 << PA1) | (1 << PA2) | (1 << PA3);
+    DDRA |= ((1 << DDA0) | (1 << DDA1) | (1 << DDA2) | (1 << DDA3));
 
     //PORTB4 used for enable pin, set to output
-    DDRB |= (1 << PB4);
+    DDRB |= (1<<DDB4);
 
     //PORTB6 used for the RS pin, set to output
-    DDRB |= (1 << PB6);
+    DDRB |= (1<< DDB6);
 }
 
 
@@ -190,19 +190,19 @@ void initLCDProcedure(){
       delayMs(15);
 
   // Write 0b0011 to DB[7:4] and delay 4100 microseconds
-      fourBitCommandWithDelay(0b0011, 4100);
+      fourBitCommandWithDelay(0b0011, 4300);
 
   // Write 0b0011 to DB[7:4] and delay 100 microseconds
-      fourBitCommandWithDelay(0b0011, 100);
+      fourBitCommandWithDelay(0b0011, 150);
 
   // The data sheet does not make this clear, but at this point you are issuing
   // commands in two sets of four bits. You must delay after each command
   // (which is the second set of four bits) an amount specified on page 3 of
   // the data sheet.
   // write 0b0011 to DB[7:4] and 100us delay
-      fourBitCommandWithDelay(0b0011, 100);
+      fourBitCommandWithDelay(0b0011, 150);
   // write 0b0010 to DB[7:4] and 100us delay.
-      fourBitCommandWithDelay(0b0010, 100);
+      fourBitCommandWithDelay(0b0010, 150);
 
   // Function set in the command table with 53us delay
   //RS RW DB7 DB6 DB5 DB4 DB3 DB2 DB1 DB0
@@ -211,30 +211,30 @@ void initLCDProcedure(){
   //N is 1 to enable 2 lines
   //RE is 1 to enable external register
   //* and # are 0, * can be anything, # 0 for 16x2 board
-        eightBitCommandWithDelay(0b00101100, 53);
+        eightBitCommandWithDelay(0b00101000, 70);
 
   // Display off in the command table with 53us delay
     // 0  0   0   0   0   1   D   C  B
     // D = 1 to toggle display, C = 0 for cursor on/off, cursor blink at position B
-        eightBitCommandWithDelay(0b00001000, 53);
+        eightBitCommandWithDelay(0b00001000, 70);
 
   // Clear display in the command table. Remember the delay is longer!!!
         //0 0 0 0 0 0 0 1
         //delay for 1.8 ms to ensure it lasts 82us - 1.64ms
-        eightBitCommandWithDelay(0b00000001, 1800);
+        eightBitCommandWithDelay(0b00000001, 5000);
 
   // Entry Mode Set in the command table.
         //0 0 0 0 0 1 i/d s
         //i/d = 1/0 = increment/decrement = 1 to increment cursor direction
         //s = 0 always
-        eightBitCommandWithDelay(0b00000110, 53);
+        eightBitCommandWithDelay(0b00000110, 70);
   // Display ON/OFF Control in the command table. (Yes, this is not specified),
   // in the data sheet, but you have to do it to get this to work. Yay datasheets!)
         //0 0 0 0 1 D C B
         //D = 1 to turn On display
         //C = 1 to turn cursor On
         //B = 1 to turn on blink of character
-        eightBitCommandWithDelay(0b00001100, 53);
+        eightBitCommandWithDelay(0b00001111, 70);
 
 }
 
