@@ -59,19 +59,39 @@ int main(){
   Serial.begin(9600);
 
   StartI2C_Trans(0b01001000);//call the deveice by address
-  StopI2C_Trans(); //end transmission
+  
   
 
   unsigned int pResistorDiff; //ADC0 - ADC1
   unsigned char temp;
+  float realtemp=0;
+
 
 
   
 
   while(1){
+  
     Read_from(0b01001000,0b00000000);
     temp = Read_data();
-    Serial.print(temp);
+    
+    Serial.print(realtemp);
+
+    if(temp & 0x01){
+      temp = temp & 0xFE;
+      
+      realtemp = (float)temp + 0.5;
+    }
+    else{
+      realtemp = temp;
+    }
+    if(temp & 0x80){
+      realtemp = temp*(-1);
+
+    }
+    
+    Serial.print("\n");
+    delayMs(1000);
    
 
 
