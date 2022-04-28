@@ -42,7 +42,7 @@ void initPWM(){
     TCCR3B |= (1<<CS31);       
     TCCR3B &= ~(1<<CS30);
 
-    OCR3A = 0;
+    OCR3A = 1500;
 
    
 
@@ -74,4 +74,21 @@ void changeDutyCycleAuto(int adcNum) {
 //              OCR3A = OCR3A + conversion;
 // }
 
+    //when shining a light directly above, adc difference fluctuates from -140 to -120
+    //if difference is in this range stay put
+
+    
+    if(adcNum < -150){ 
+        OCR3A -= 1;         //move left if below threshold
+    }
+    else if(adcNum > -110){
+        OCR3A += 1;         //move right if over threshold
+    }
+
+    if(OCR3A > 2550){   
+        OCR3A = 2550;       //cap OCR3A at 2550 since this is max duty cycle for the servo pwm
+    }
+    else if (OCR3A < 1000){
+        OCR3A = 1000;       //cap lower bound of OCR3A since this in min duty cycle for servo pwm
+    }
 }

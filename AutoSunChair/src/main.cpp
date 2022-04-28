@@ -19,7 +19,7 @@ typedef enum {
   MANUAL
 } state_e;
 
-state_e mode = MANUAL;
+state_e mode = AUTOMATIC;
 
 typedef enum {
   WAIT_PRESS_L,
@@ -62,7 +62,7 @@ int main(){
   
   
 
-  unsigned int pResistorDiff; //ADC0 - ADC1
+  int val0, val1, diff;
   unsigned char temp; // temperature variable
   float realtemp=0; // temperature float variable
   char tempval[8];
@@ -106,8 +106,26 @@ moveCursor(1,0);
   //state machine for controlling automatic or manual mode
     switch(mode){
       case(AUTOMATIC):
-        pResistorDiff = ADCL;
-        pResistorDiff  += ((unsigned int) ADCH) << 8;
+        val0 = readPin0();
+        val1 = readPin1();
+
+        diff = val0 - val1;
+
+        // Serial.print("Pin 0 ");
+        // Serial.print(val0);
+        // Serial.print("\n");
+
+        // Serial.print("Pin 1 ");
+        // Serial.print(val1);
+        // Serial.print("\n");
+
+        Serial.print("Diff ");
+        Serial.print(diff);
+        Serial.print("\n");
+
+        Serial.flush();
+
+        changeDutyCycleAuto(diff);
 
       break;
 

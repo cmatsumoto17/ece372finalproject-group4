@@ -14,4 +14,6 @@ registers for the two 10-bit PWM timers used for the lab. Editing
 the OCRnA register changes the duty cycle of the PWM signal */
 void changeDutyCycle(int adcNum);
 
+void changeDutyCycleAuto(int adcNum);
+
 #endif
