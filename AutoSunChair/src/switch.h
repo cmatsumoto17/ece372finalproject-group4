@@ -4,6 +4,7 @@
 #define SWITCH_H
 
 void initSwitchPB0();
+void initSwitchPJ0();
 void initSwitchPK7();
 
 #endif

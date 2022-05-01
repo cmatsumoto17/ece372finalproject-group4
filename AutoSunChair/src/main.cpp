@@ -16,7 +16,13 @@
 
 typedef enum {
   AUTOMATIC,
-  MANUAL
+  MANUAL,
+  DB_PRESS_A,
+  WAIT_RELEASE_A,
+  DB_RELEASE_A,
+  DB_PRESS_M,
+  WAIT_RELEASE_M,
+  DB_RELEASE_M
 } state_e;
 
 state_e mode = AUTOMATIC;
@@ -145,6 +151,33 @@ moveCursor(1,0);
           Serial.println("RIGHT");
         }
       break;
+      case(DB_PRESS_A):
+          delayMs(1); // if debouncing, delay then wait for release
+          mode = WAIT_RELEASE_A;
+      break;
+    
+      case(WAIT_RELEASE_A):
+        //waiting for release do nothing
+      break;
+
+      case(DB_RELEASE_A):
+         delayMs(1); // if debouncing, delay then set to manual mode
+         mode = MANUAL;
+      break;
+
+      case(DB_PRESS_M):
+          delayMs(1); // if debouncing, delay then wait for release
+          mode = WAIT_RELEASE_M;
+      break;
+    
+      case(WAIT_RELEASE_M):
+        //waiting for release do nothing
+      break;
+
+      case(DB_RELEASE_M):
+          delayMs(1); // if debouncing, delay then set to automatic mode
+          mode = AUTOMATIC;
+      break;
     }
 
     // state machine for left button debouncing
@@ -194,6 +227,22 @@ ISR(PCINT0_vect) {
     
     l_state = DB_RELEASE_L; // debounce
   }
+}
+
+ISR(PCINT1_vect){
+  if(mode == AUTOMATIC){ // if interrupt triggered while automatic mode
+    mode = DB_PRESS_A; // debounce
+  }
+  else if(mode == WAIT_RELEASE_A){ // if interrupt triggered while waiting for release
+    mode = DB_RELEASE_A; // debounce and set to MANUAL mode
+  }
+  else if (mode == MANUAL){ // if interrupt triggered while manual mode
+    mode = DB_PRESS_M; // debounce
+  }
+  else if (mode == WAIT_RELEASE_M){ // if interrupt triggered while waiting for release
+    mode = DB_RELEASE_M; // debounce and set to AUTOMATIC mode
+}
+
 }
 
 ISR(PCINT2_vect) {
