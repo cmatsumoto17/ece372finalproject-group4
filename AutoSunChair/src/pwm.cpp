@@ -49,20 +49,21 @@ void initPWM(){
 }
 
 
-void changeDutyCycle(int adcNum){   // duty cycle  = pulse/period  = OCRnX/ICRn
+void moveDirection(int dir){   // duty cycle  = pulse/period  = OCRnX/ICRn
 
-    // if((-512 < adcNum) && (0 >= adcNum)){ 
-    //     OCR3A = OCR3A - 1;
-    // }
-    // else if ((0 < adcNum) && ( 511 >= adcNum)){ 
-    //     OCR3A = OCR3A + 1;
-        
-    // }
-   
-    // OCR3A = 2.77777*(adcNum) + 500 ;
-
-    OCR3A = adcNum;
-
+    if(dir == 0){    //
+        OCR3A += 5;
+    }
+    else if(dir == 1){
+        OCR3A -= 5;
+    }
+    
+    if(OCR3A > 2550){   
+        OCR3A = 2550;       //cap OCR3A at 2550 since this is max duty cycle for the servo pwm
+    }
+    else if (OCR3A < 550){
+        OCR3A = 550;       //cap lower bound of OCR3A since this in min duty cycle for servo pwm
+    }
 }
 void changeDutyCycleAuto(int adcNum) {
     //calibration is calculated based on the stable adcDiff reading when a light is shined direclty above

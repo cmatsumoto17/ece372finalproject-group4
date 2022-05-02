@@ -13,13 +13,13 @@
 
 
 void servoLeft() {
-    changeDutyCycle(1000); // 5% duty cycle * TOP (20000)
+    moveDirection(0); // 5% duty cycle * TOP (20000)
 }
 
 void servoRight() {
-    changeDutyCycle(2000); // 10% duty cycle * TOP (20000)
+    moveDirection(1); // 10% duty cycle * TOP (20000)
 }
 
 void servoOff() {
-    changeDutyCycle(0); // stop moving
+    moveDirection(3); // stop moving
 }
