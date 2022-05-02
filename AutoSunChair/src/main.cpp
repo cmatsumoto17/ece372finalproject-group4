@@ -43,6 +43,11 @@ typedef enum {
   DB_RELEASE_R
 } state_r;
 
+typedef enum {
+  WAIT, UPDATELCD
+}statelcd;
+
+volatile statelcd lcdstate = WAIT;
 volatile state_r r_state = WAIT_PRESS_R;
 
 volatile boolean rotateLeft = false;
@@ -54,6 +59,7 @@ int main(){
   initADC();
   initSwitchPB0();
   initSwitchPK7();
+  initSwitchPJ0();
   initTimer0();
   initTimer1();
   initI2C();
@@ -71,40 +77,21 @@ int main(){
   int val0, val1, diff;
   unsigned char temp; // temperature variable
   float realtemp=0; // temperature float variable
+  float tempfar = 0;
   char tempval[8];
+  char tempfaren[8];
 
 moveCursor(0,0);
-writeString("Temperature in C");
+writeString("Temperature in F");
 moveCursor(1,0);
 
   
 
   while(1){
   
-    Read_from(0b01001000,0b00000000);
-    temp = Read_data();
-    Serial.print(realtemp);
+   
+   
     
-
-    if(temp & 0x01){
-      temp = temp & 0xFE;
-      
-      realtemp = (float)temp + 0.5;
-    }
-    else{
-      realtemp = temp;
-    }
-    if(temp & 0x80){
-      realtemp = temp*(-1);
-
-    }
-    dtostrf(realtemp,6,2,tempval);
-    moveCursor(1,0);
-    writeString(tempval);
-    moveCursor(1,0);
-    
-    Serial.print("\n");
-    delayMs(1000);
    
 
 
@@ -213,6 +200,44 @@ moveCursor(1,0);
     }
   
     // print temperature on LCD
+  switch(lcdstate){
+    case WAIT:
+      break;
+
+      case UPDATELCD:
+         Read_from(0b01001000,0b00000000);
+        temp = Read_data();
+        Serial.print(realtemp);
+    
+
+          if(temp & 0x01){
+          temp = temp & 0xFE;
+      
+          realtemp = (float)temp + 0.5;
+    }
+    else{
+      realtemp = temp;
+    }
+    if(temp & 0x80){
+      realtemp = temp*(-1);
+
+    }
+    dtostrf(realtemp,6,2,tempval);
+    moveCursor(1,0);
+    tempfar = (((9/5)*realtemp)+32);
+    dtostrf(tempfar,6,2,tempfaren);
+
+
+    writeString(tempfaren);
+    moveCursor(1,0);
+    
+    Serial.print("\n");
+    lcdstate = WAIT;
+  }
+
+
+
+
   }
 }
 
@@ -256,4 +281,13 @@ ISR(PCINT2_vect) {
     
     r_state = DB_RELEASE_R; // debounce
   }
+}
+
+ISR(TIMER3_COMPA_vect){
+if(lcdstate == WAIT){
+  lcdstate = UPDATELCD;
+
+}
+
+
 }

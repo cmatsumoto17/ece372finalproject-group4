@@ -52,10 +52,10 @@ void initPWM(){
 void moveDirection(int dir){   // duty cycle  = pulse/period  = OCRnX/ICRn
 
     if(dir == 0){    //
-        OCR3A += 5;
+        OCR3A += 100;
     }
     else if(dir == 1){
-        OCR3A -= 5;
+        OCR3A -= 100;
     }
     
     if(OCR3A > 2550){   
@@ -76,10 +76,10 @@ void changeDutyCycleAuto(int adcNum) {
     //when shining a light directly above, adc difference fluctuates from -20 to 20
     //if difference is in this range stay put
     if(adcNum < -20 + calibration){ 
-        OCR3A -= 10;         //move left if below threshold
+        OCR3A -= 100;         //move left if below threshold
     }
     else if(adcNum > 20 + calibration){
-        OCR3A += 10;         //move right if over threshold
+        OCR3A += 100;         //move right if over threshold
     }
 
     if(OCR3A > 2550){   
