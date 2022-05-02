@@ -62,6 +62,7 @@ int main(){
   initSwitchPJ0();
   initTimer0();
   initTimer1();
+  initTimer3();
   initI2C();
   initLCD();
  // initLCDPins();
