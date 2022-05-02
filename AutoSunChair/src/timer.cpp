@@ -71,3 +71,17 @@ void delayMs(unsigned int delay){
 
     TCCR0B &= ~((1 << CS02) | (1 << CS01) | (1 << CS00)); // turn off clock
 }
+
+void initTimer3(){
+    TCCR3A &= ~(1 << WGM30); // set to CTC mode 
+    TCCR3A &= ~(1 << WGM31);
+    TCCR3B|= (1 << WGM32);
+    TCCR3B &= ~(1 << WGM33);
+    TCCR3B &= ~(1 << CS31); // prescalar of 1024
+    TCCR3B |= (1 << CS32)| (1 << CS30);
+	//OCR3A = 15625
+    OCR3AH = 0x3D;
+    OCR3AL = 0x09;//Td = 1 second
+}
+
+
