@@ -78,12 +78,11 @@ int main(){
   int val0, val1, diff;
   unsigned char temp; // temperature variable
   float realtemp=0; // temperature float variable
-  float tempfar = 0;
   char tempval[8];
-  char tempfaren[8];
+  
 
 moveCursor(0,0);
-writeString("Temperature in F");
+writeString("Temperature in C"); // writes to lcd
 moveCursor(1,0);
 
   
@@ -206,34 +205,31 @@ moveCursor(1,0);
       break;
 
       case UPDATELCD:
-         Read_from(0b01001000,0b00000000);
-        temp = Read_data();
+         Read_from(0b01001000,0b00000000); //read data from temp register 
+        temp = Read_data(); //store the read data into temp variable
         Serial.print(realtemp);
     
 
-          if(temp & 0x01){
-          temp = temp & 0xFE;
+          if(temp & 0x01){  // if the lsb is set
+          temp = temp & 0xFE;  // set the lsb to 0
       
-          realtemp = (float)temp + 0.5;
+          realtemp = (float)temp + 0.5; // add 0.5 degrees as per datasheet
     }
     else{
-      realtemp = temp;
+      realtemp = temp;  // if the lsb is not set 
     }
-    if(temp & 0x80){
-      realtemp = temp*(-1);
+    if(temp & 0x80){ //if the signed bit is set
+      realtemp = temp*(-1); 
 
     }
-    dtostrf(realtemp,6,2,tempval);
-    moveCursor(1,0);
-    tempfar = (((9/5)*realtemp)+32);
-    dtostrf(tempfar,6,2,tempfaren);
+    dtostrf(realtemp,6,2,tempval); // converts a float to a string
+    moveCursor(1,0); //sets the lcd cursor position
 
-
-    writeString(tempfaren);
-    moveCursor(1,0);
+    writeString(tempval); //writes the temperature value to the lcd
+    moveCursor(1,0);  // sets the cursor position of lcd back
     
     Serial.print("\n");
-    lcdstate = WAIT;
+    lcdstate = WAIT;  //update state
   }
 
 
@@ -285,8 +281,8 @@ ISR(PCINT2_vect) {
 }
 
 ISR(TIMER3_COMPA_vect){
-if(lcdstate == WAIT){
-  lcdstate = UPDATELCD;
+if(lcdstate == WAIT){  
+  lcdstate = UPDATELCD; // print the new temp
 
 }
 
