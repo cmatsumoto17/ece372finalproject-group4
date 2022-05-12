@@ -1,3 +1,9 @@
+/* Automatic Sun Chair
+ * ECE 372A Final Project - SP22
+ * Lab A Group 4
+ * Adam Kosinski, Ashton Rowe, Cameron Matsumoto, Logan Eaton
+*/
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
