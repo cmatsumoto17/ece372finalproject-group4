@@ -9,10 +9,9 @@
 #include "adc.h"
 #include "pwm.h"
 
-
-
-
 #include "Arduino.h"
+//used for converting string to float dtostrf and Serial print functions
+
 
 typedef enum {
   AUTOMATIC,
@@ -65,8 +64,6 @@ int main(){
   initTimer3();
   initI2C();
   initLCD();
- // initLCDPins();
-// initLCDProcedure();
   initPWM();
 
   Serial.begin(9600);
@@ -81,36 +78,24 @@ int main(){
   char tempval[8];
   
 
-moveCursor(0,0);
-writeString("Temperature in C"); // writes to lcd
-moveCursor(1,0);
+  moveCursor(0,0);
+  writeString("Temperature in C"); // writes to lcd
+  moveCursor(1,0);
 
   
 
   while(1){
-  
-   
-   
-    
-   
-
 
 
   //state machine for controlling automatic or manual mode
     switch(mode){
       case(AUTOMATIC):
+      //read in the two photoresistor values
         val0 = readPin0();
         val1 = readPin1();
 
+      //compute the difference to find which side has more light
         diff = val0 - val1;
-
-        // Serial.print("Pin 0 ");
-        // Serial.print(val0);
-        // Serial.print("\n");
-
-        // Serial.print("Pin 1 ");
-        // Serial.print(val1);
-        // Serial.print("\n");
 
         Serial.print("Diff ");
         Serial.print(diff);
@@ -118,6 +103,7 @@ moveCursor(1,0);
 
         Serial.flush();
 
+      //automatically change the position of the pwm based on which side has more light
         changeDutyCycleAuto(diff);
 
       break;
@@ -167,7 +153,7 @@ moveCursor(1,0);
       break;
     }
 
-    // state machine for left button debouncing
+    // state machine for LEFT button debouncing
     switch(l_state) {
       case WAIT_PRESS_L:
         break; // if waiting for press, do nothing
@@ -183,7 +169,7 @@ moveCursor(1,0);
         break;
     }
 
-    // state machine for right button debouncing
+    // state machine for RIGHT button debouncing
     switch(r_state) {
       case WAIT_PRESS_R:
         break; // if waiting for press, do nothing
@@ -238,6 +224,8 @@ moveCursor(1,0);
   }
 }
 
+
+//interrupt for LEFT button
 ISR(PCINT0_vect) {
   if (l_state == WAIT_PRESS_L) { // if interrupt triggered while waiting for press
     rotateLeft = true; // start rotating
@@ -251,6 +239,7 @@ ISR(PCINT0_vect) {
   }
 }
 
+//interrupt for MODE button
 ISR(PCINT1_vect){
   if(mode == AUTOMATIC){ // if interrupt triggered while automatic mode
     mode = DB_PRESS_A; // debounce
@@ -263,10 +252,11 @@ ISR(PCINT1_vect){
   }
   else if (mode == WAIT_RELEASE_M){ // if interrupt triggered while waiting for release
     mode = DB_RELEASE_M; // debounce and set to AUTOMATIC mode
-}
+  }
 
 }
 
+//interrupt for RIGHT button
 ISR(PCINT2_vect) {
   if (r_state == WAIT_PRESS_R) { // if interrupt triggered while waiting for press
     rotateRight = true; // start rotating
@@ -280,11 +270,10 @@ ISR(PCINT2_vect) {
   }
 }
 
+//interupt for TIMER3
 ISR(TIMER3_COMPA_vect){
-if(lcdstate == WAIT){  
-  lcdstate = UPDATELCD; // print the new temp
+  if(lcdstate == WAIT){  
+    lcdstate = UPDATELCD; // print the new temp
 
-}
-
-
+  }
 }

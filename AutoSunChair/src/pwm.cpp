@@ -48,12 +48,14 @@ void initPWM(){
 
 }
 
+//function changes the duty cycle to move the servo left/right
+void moveDirection(int dir){   
 
-void moveDirection(int dir){   // duty cycle  = pulse/period  = OCRnX/ICRn
-
+    //input dir = 0 corresponds to moving left
     if(dir == 0){    //
         OCR3A += 100;
     }
+    //input dir = 1 corresponds to moving right
     else if(dir == 1){
         OCR3A -= 100;
     }
@@ -65,6 +67,9 @@ void moveDirection(int dir){   // duty cycle  = pulse/period  = OCRnX/ICRn
         OCR3A = 550;       //cap lower bound of OCR3A since this in min duty cycle for servo pwm
     }
 }
+
+
+//function automatically changes the duty cycle of the pwm for a differential input
 void changeDutyCycleAuto(int adcNum) {
     //calibration is calculated based on the stable adcDiff reading when a light is shined direclty above
     int calibration = -50;
@@ -73,7 +78,7 @@ void changeDutyCycleAuto(int adcNum) {
     adcNum += calibration;
 
 
-    //when shining a light directly above, adc difference fluctuates from -20 to 20
+    //when shining a light directly above, adc difference fluctuates from -20 to 20 around the stable value
     //if difference is in this range stay put
     if(adcNum < -20 + calibration){ 
         OCR3A -= 100;         //move left if below threshold
